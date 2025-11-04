@@ -251,6 +251,7 @@ class Qwen2ModelWeek1:
         inputs: mx.array,
     ) -> mx.array:
         # TODO add explicit dims?
+        # (N.., L) -> (N.., L, E)
         embeds = self.embedding(inputs)
 
         hidden_output = embeds
@@ -263,6 +264,8 @@ class Qwen2ModelWeek1:
                 hidden_output = layer(hidden_output)
 
         normed_output = self.final_norm(hidden_output)
+
+        # output: (N.., L, vocab_size)
         if self.lm_head is not None:
             return linear(normed_output, self.lm_head)
         else:
