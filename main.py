@@ -1,9 +1,9 @@
-from mlx_lm import load
-import mlx_lm
-import mlx.core as mx
 import argparse
 
+import mlx.core as mx
+import mlx_lm
 import mlx_lm.sample_utils
+from mlx_lm import load
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--model", type=str, default="qwen2-7b")
@@ -29,20 +29,20 @@ if args.solution == "tiny_llm":
     print("Using your tiny_llm solution")
     from tiny_llm import (
         models,
+        sampler,
         simple_generate,
         simple_generate_with_kv_cache,
         speculative_generate,
-        sampler,
     )
 
 elif args.solution == "tiny_llm_ref" or args.solution == "ref":
     print("Using tiny_llm_ref solution")
     from tiny_llm_ref import (
         models,
+        sampler,
         simple_generate,
         simple_generate_with_kv_cache,
         speculative_generate,
-        sampler,
     )
 
 elif args.solution == "mlx":
