@@ -30,7 +30,7 @@ def simple_generate(
             f"mismatched shapes: {logits_for_next_token.shape} != {logprobs_for_next_token.shape}"
         )
         # shape: (N.., num_vocab) -> (N..)
-        next_tokens = mx.argmax(logprobs_for_next_token, axis=-1)
+        next_tokens = sampler(logprobs_for_next_token)
         # since for now (nov 3rd 2025) batch_size=1
         return next_tokens[0].item()
 
