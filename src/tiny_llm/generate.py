@@ -7,6 +7,12 @@ from .qwen2_week1 import Qwen2ModelWeek1
 from .qwen2_week2 import Qwen2ModelWeek2
 
 
+def log_softmax(logits: mx.array):
+    x_max = mx.max(logits, axis=-1)
+    shifted_x = logits - x_max
+    return shifted_x - mx.log(mx.sum(mx.exp(shifted_x)))
+
+
 def simple_generate(
     model: Qwen2ModelWeek1,
     tokenizer: TokenizerWrapper,
@@ -18,8 +24,13 @@ def simple_generate(
         output_logits = model(y)
         # shape: (N.., L, num_vocab) -> (N.., num_vocab)
         logits_for_next_token = output_logits[:, -1, :]
+        # (N.., num_vocab) -> (N.., num_vocab)
+        logprobs_for_next_token = log_softmax(logits_for_next_token)
+        assert logits_for_next_token.shape == logprobs_for_next_token.shape, (
+            f"mismatched shapes: {logits_for_next_token.shape} != {logprobs_for_next_token.shape}"
+        )
         # shape: (N.., num_vocab) -> (N..)
-        next_tokens = mx.argmax(logits_for_next_token, axis=-1)
+        next_tokens = sampler(logprobs_for_next_token)
         # since for now (nov 3rd 2025) batch_size=1
         return next_tokens[0].item()
 
@@ -48,4 +59,5 @@ def speculative_generate(
     tokenizer: TokenizerWrapper,
     prompt: str,
 ) -> str:
+    pass
     pass
